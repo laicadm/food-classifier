@@ -5,6 +5,14 @@ import numpy as np
 # load the model
 model = load_model('food_classification_model.keras')
 
+# class indices as basis
+class_labels = {
+    0: 'Apple Pie',
+    1: 'Bibimbap',
+    2: 'Caesar Salad',
+    3: 'Donuts'
+}
+
 # preprocess image
 def preprocess_image(img_path, target_size=(150, 150)):
     img = image.load_img(img_path, target_size=target_size)
@@ -19,15 +27,13 @@ try:
 
     prediction = model.predict(img_array)
 
-    predicted_probability = prediction[0][0]
-    predicted_class = (predicted_probability > 0.5).astype(int)
+    predicted_class_index = np.argmax(prediction, axis=1)[0]
 
-    if predicted_class == 1:
-        print('The image is not classified as food.')
-    else:
-        print('The image is classified as food.')
+    predicted_class_label = class_labels.get(predicted_class_index, "Unknown class")
+    predicted_probability = prediction[0][predicted_class_index]
 
-    # print(f'Predicted Probability: {round(predicted_probability * 100, 2)}%')
+    print(f'The image is classified as: {predicted_class_label}')
+    print(f'Predicted Probability: {round(float(predicted_probability), 5)}')
 
 except Exception as e:
     print(e)

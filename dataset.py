@@ -26,7 +26,10 @@ class Dataset:
             batch_size=self.batch_size,
             class_mode='binary'
         )
-        print("Class indices:", train_data['train_generator'].class_indices)
+
+        class_indices = train_data['train_generator'].class_indices
+        print(class_indices)
+        # train_data['class_labels'] = {v: k for k, v in class_indices.items()}
 
         train_data['train_dataset'] = tf.data.Dataset.from_generator(
             lambda: train_data['train_generator'],

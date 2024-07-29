@@ -1,31 +1,25 @@
-# import
+# imports
 import os
 from dotenv import load_dotenv
 from models import Model
 from dataset import Dataset
-import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
 
 # load env
 load_dotenv()
 
 # load dataset: training, validation, testing
+# batch size is 16
 init_dataset = Dataset(os.getenv('DATASET_PATH'), 16)
 train_data = init_dataset.trainData()
 val_data = init_dataset.validationData()
 test_data = init_dataset.testData()
 
 # define model params
-dense_layer = [
-    {'units': 128, 'activation': 'relu'},
-    {'units': 64, 'activation': 'relu'}, 
-    {'units': 1, 'activation': 'sigmoid'} # activation=softmax for categorical
-]
 compiler = {
     'optimizer': 'adam',
-    'loss': 'binary_crossentropy', #loss=categorical_crossentropy for categorical
+    'loss': 'sparse_categorical_crossentropy', #loss = categorical_crossentropy or binary_crossentropy
     'metrics':  ['accuracy']
 }
 
@@ -48,7 +42,7 @@ base_model = Sequential([
     Flatten(),
     Dense(128, activation='relu'),
     Dense(64, activation='relu'),
-    Dense(1, activation='sigmoid')
+    Dense(4, activation='softmax') # activation = softmax or sigmoid
 ])
 model = Model(base_model, compiler)
 model.compileModel()

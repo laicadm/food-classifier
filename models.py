@@ -1,6 +1,3 @@
-import tensorflow as tf
-from tensorflow.keras.layers import Dense, Flatten
-
 class Model:
 
     def __init__(self, model, compilers):
