@@ -6,6 +6,7 @@ from dataset import Dataset
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.layers import Dense, Conv2D, MaxPooling2D, Flatten
 
 # load env
 load_dotenv()
@@ -37,8 +38,19 @@ steps_per_epoch = max(1, train_generator.samples // train_generator.batch_size)
 validation_steps = max(1, val_generator.samples // val_generator.batch_size)
 
 # building the model
-model = Model(Sequential(), dense_layer, compiler)
-model.addDenseLayer()
+base_model = Sequential([
+    Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+    MaxPooling2D((2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Conv2D(128, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dense(64, activation='relu'),
+    Dense(1, activation='sigmoid')
+])
+model = Model(base_model, compiler)
 model.compileModel()
 model.summarizeModel()
 model.fitModel(
